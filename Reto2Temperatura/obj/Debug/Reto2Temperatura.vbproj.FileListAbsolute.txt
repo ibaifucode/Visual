@@ -1,0 +1,12 @@
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\bin\Debug\Reto2Temperatura.exe.config
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\bin\Debug\Reto2Temperatura.exe
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\bin\Debug\Reto2Temperatura.pdb
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\bin\Debug\Reto2Temperatura.xml
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.vbproj.AssemblyReference.cache
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.Form1.resources
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.Resources.resources
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.vbproj.GenerateResource.cache
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.vbproj.CoreCompileInputs.cache
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.exe
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.xml
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.pdb
