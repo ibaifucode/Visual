@@ -10,3 +10,8 @@ C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Tem
 C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.exe
 C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.xml
 C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.pdb
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\bin\Debug\Dropbox.Api.dll
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\bin\Debug\Newtonsoft.Json.dll
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\bin\Debug\Dropbox.Api.xml
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\bin\Debug\Newtonsoft.Json.xml
+C:\Users\ekaga\source\repos\Reto2Temperatura\Reto2Temperatura\obj\Debug\Reto2Temperatura.vbproj.CopyComplete
