@@ -26,7 +26,7 @@ Public Class Form1
     Private Async Sub Button_Transformar_y_subir(sender As Object, e As EventArgs) Handles Button2.Click
         Dim carpetaXml As String = "../"
         Dim carpetaTxt As String = "../txt/"
-        Dim token As String = "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"
+        Dim token As String = "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"
         Dim owner As String = "ekagardu19"
         Dim repo As String = "RetoTemperatura"
 
@@ -158,7 +158,7 @@ Public Class Form1
             Dim content As New MultipartFormDataContent()
             content.Add(New ByteArrayContent(fileContent), "file", Path.GetFileName(archivoTxt))
 
-            Dim response = Await client.PutAsync($"https://api.github.com/{owner}/{repo}/{Path.GetFileName(archivoTxt)}", content)
+            Dim response = Await client.PutAsync($"https://api.github.com/repos/{owner}/{repo}/contents/{Path.GetFileName(archivoTxt)}", content)
 
             If response.IsSuccessStatusCode Then
                 MessageBox.Show($"Archivo '{archivoTxt}' subido exitosamente a GitHub.")
