@@ -126,5 +126,11 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="imagenes\_0aa316fa-26fc-4b75-9c44-815ab63bc515.jpg" />
+    <None Include="Resources\nub.jpg" />
+    <None Include="Resources\nublado.jpg" />
+    <None Include="Resources\_0aa316fa-26fc-4b75-9c44-815ab63bc515.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

@@ -23,7 +23,7 @@ Public Class Form1
 
     'TODOS LOS BOTONES QUE HAY Y SUS FUNCIONALIDADES
 
-    Private Async Sub Button_Transformar_y_subir(sender As Object, e As EventArgs) Handles Button2.Click
+    Private Async Sub Button_Transformar_y_subir(sender As Object, e As EventArgs) Handles btEnviarSeleccionados.Click
         Dim carpetaXml As String = "../"
         Dim carpetaTxt As String = "../txt/"
         Dim token As String = "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"
@@ -109,7 +109,7 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub Button_Salir(sender As Object, e As EventArgs) Handles Button1.Click
+    Private Sub Button_Salir(sender As Object, e As EventArgs)
         Close()
     End Sub
 
@@ -168,4 +168,7 @@ Public Class Form1
         End Using
     End Function
 
+    Private Sub Label3_Click(sender As Object, e As EventArgs) Handles Label3.Click
+
+    End Sub
 End Class
