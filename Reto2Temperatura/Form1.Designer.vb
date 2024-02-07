@@ -27,18 +27,24 @@ Partial Class Form1
         Me.btEnviarSeleccionados = New System.Windows.Forms.Button()
         Me.Button3 = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.tbmirarciudad = New System.Windows.Forms.TextBox()
         Me.Button4 = New System.Windows.Forms.Button()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.combobox = New System.Windows.Forms.ComboBox()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.Label2 = New System.Windows.Forms.Label()
-        Me.lblNombreCiudadActual = New System.Windows.Forms.Label()
-        Me.Label3 = New System.Windows.Forms.Label()
-        Me.Label4 = New System.Windows.Forms.Label()
+        Me.lblTempActual = New System.Windows.Forms.Label()
+        Me.paneltexto = New System.Windows.Forms.FlowLayoutPanel()
+        Me.lblCiudadActual = New System.Windows.Forms.Label()
+        Me.panelPrevision = New System.Windows.Forms.FlowLayoutPanel()
+        Me.lblPrevision = New System.Windows.Forms.Label()
+        Me.btAnadirEnInforme = New System.Windows.Forms.Button()
+        Me.Button1 = New System.Windows.Forms.Button()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel1.SuspendLayout()
         Me.Panel2.SuspendLayout()
+        Me.paneltexto.SuspendLayout()
+        Me.panelPrevision.SuspendLayout()
         Me.SuspendLayout()
         '
         'DataGridView1
@@ -99,13 +105,6 @@ Partial Class Form1
         Me.Label1.TabIndex = 5
         Me.Label1.Text = "Ciudad"
         '
-        'tbmirarciudad
-        '
-        Me.tbmirarciudad.Location = New System.Drawing.Point(82, 13)
-        Me.tbmirarciudad.Name = "tbmirarciudad"
-        Me.tbmirarciudad.Size = New System.Drawing.Size(133, 20)
-        Me.tbmirarciudad.TabIndex = 6
-        '
         'Button4
         '
         Me.Button4.BackColor = System.Drawing.SystemColors.HighlightText
@@ -119,14 +118,23 @@ Partial Class Form1
         'Panel1
         '
         Me.Panel1.BackColor = System.Drawing.SystemColors.MenuHighlight
+        Me.Panel1.Controls.Add(Me.Button1)
+        Me.Panel1.Controls.Add(Me.combobox)
         Me.Panel1.Controls.Add(Me.Panel3)
-        Me.Panel1.Controls.Add(Me.tbmirarciudad)
         Me.Panel1.Controls.Add(Me.Label1)
         Me.Panel1.Controls.Add(Me.Button3)
         Me.Panel1.Location = New System.Drawing.Point(1, -1)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(800, 43)
         Me.Panel1.TabIndex = 8
+        '
+        'combobox
+        '
+        Me.combobox.FormattingEnabled = True
+        Me.combobox.Location = New System.Drawing.Point(82, 12)
+        Me.combobox.Name = "combobox"
+        Me.combobox.Size = New System.Drawing.Size(133, 21)
+        Me.combobox.TabIndex = 11
         '
         'Panel3
         '
@@ -157,49 +165,92 @@ Partial Class Form1
         Me.Label2.TabIndex = 10
         Me.Label2.Text = "MI INFORME"
         '
-        'lblNombreCiudadActual
+        'lblTempActual
         '
-        Me.lblNombreCiudadActual.AutoSize = True
-        Me.lblNombreCiudadActual.BackColor = System.Drawing.SystemColors.Control
-        Me.lblNombreCiudadActual.Font = New System.Drawing.Font("Microsoft Sans Serif", 20.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblNombreCiudadActual.Location = New System.Drawing.Point(77, 141)
-        Me.lblNombreCiudadActual.Name = "lblNombreCiudadActual"
-        Me.lblNombreCiudadActual.Size = New System.Drawing.Size(242, 31)
-        Me.lblNombreCiudadActual.TabIndex = 10
-        Me.lblNombreCiudadActual.Text = " CIUDAD ACTUAL"
+        Me.lblTempActual.AutoSize = True
+        Me.lblTempActual.BackColor = System.Drawing.SystemColors.Control
+        Me.lblTempActual.Font = New System.Drawing.Font("Microsoft Sans Serif", 48.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTempActual.ForeColor = System.Drawing.SystemColors.Control
+        Me.lblTempActual.Location = New System.Drawing.Point(3, 0)
+        Me.lblTempActual.Name = "lblTempActual"
+        Me.lblTempActual.Size = New System.Drawing.Size(167, 73)
+        Me.lblTempActual.TabIndex = 11
+        Me.lblTempActual.Text = "31 C"
         '
-        'Label3
+        'paneltexto
         '
-        Me.Label3.AutoSize = True
-        Me.Label3.BackColor = System.Drawing.SystemColors.Control
-        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 48.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(114, 185)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(167, 73)
-        Me.Label3.TabIndex = 11
-        Me.Label3.Text = "31 C"
+        Me.paneltexto.BackColor = System.Drawing.Color.White
+        Me.paneltexto.Controls.Add(Me.lblTempActual)
+        Me.paneltexto.Controls.Add(Me.lblCiudadActual)
+        Me.paneltexto.Location = New System.Drawing.Point(1, 41)
+        Me.paneltexto.Margin = New System.Windows.Forms.Padding(0)
+        Me.paneltexto.Name = "paneltexto"
+        Me.paneltexto.Size = New System.Drawing.Size(604, 74)
+        Me.paneltexto.TabIndex = 13
+        Me.paneltexto.WrapContents = False
         '
-        'Label4
+        'lblCiudadActual
         '
-        Me.Label4.AutoSize = True
-        Me.Label4.BackColor = System.Drawing.SystemColors.Control
-        Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 20.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label4.Location = New System.Drawing.Point(385, 201)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(242, 31)
-        Me.Label4.TabIndex = 12
-        Me.Label4.Text = " CIUDAD ACTUAL"
+        Me.lblCiudadActual.AutoSize = True
+        Me.lblCiudadActual.BackColor = System.Drawing.SystemColors.ControlDark
+        Me.lblCiudadActual.Font = New System.Drawing.Font("Segoe UI Semibold", 20.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCiudadActual.ForeColor = System.Drawing.SystemColors.Control
+        Me.lblCiudadActual.Location = New System.Drawing.Point(176, 0)
+        Me.lblCiudadActual.Name = "lblCiudadActual"
+        Me.lblCiudadActual.Size = New System.Drawing.Size(380, 37)
+        Me.lblCiudadActual.TabIndex = 12
+        Me.lblCiudadActual.Text = "NINGUNA CIUDAD BUSCADA"
+        '
+        'panelPrevision
+        '
+        Me.panelPrevision.Controls.Add(Me.lblPrevision)
+        Me.panelPrevision.Location = New System.Drawing.Point(1, 115)
+        Me.panelPrevision.Name = "panelPrevision"
+        Me.panelPrevision.Size = New System.Drawing.Size(797, 55)
+        Me.panelPrevision.TabIndex = 15
+        '
+        'lblPrevision
+        '
+        Me.lblPrevision.AutoSize = True
+        Me.lblPrevision.BackColor = System.Drawing.SystemColors.ControlDark
+        Me.lblPrevision.Font = New System.Drawing.Font("Segoe UI Semibold", 20.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblPrevision.ForeColor = System.Drawing.SystemColors.Control
+        Me.lblPrevision.Location = New System.Drawing.Point(3, 0)
+        Me.lblPrevision.Name = "lblPrevision"
+        Me.lblPrevision.Padding = New System.Windows.Forms.Padding(3)
+        Me.lblPrevision.Size = New System.Drawing.Size(386, 43)
+        Me.lblPrevision.TabIndex = 15
+        Me.lblPrevision.Text = "NINGUNA CIUDAD BUSCADA"
+        '
+        'btAnadirEnInforme
+        '
+        Me.btAnadirEnInforme.BackColor = System.Drawing.SystemColors.HighlightText
+        Me.btAnadirEnInforme.Location = New System.Drawing.Point(634, 48)
+        Me.btAnadirEnInforme.Name = "btAnadirEnInforme"
+        Me.btAnadirEnInforme.Size = New System.Drawing.Size(164, 22)
+        Me.btAnadirEnInforme.TabIndex = 16
+        Me.btAnadirEnInforme.Text = "ANADIR AL INFORME"
+        Me.btAnadirEnInforme.UseVisualStyleBackColor = False
+        '
+        'Button1
+        '
+        Me.Button1.BackColor = System.Drawing.SystemColors.HighlightText
+        Me.Button1.Location = New System.Drawing.Point(746, 10)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(51, 22)
+        Me.Button1.TabIndex = 12
+        Me.Button1.Text = "Salir"
+        Me.Button1.UseVisualStyleBackColor = False
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.SystemColors.ActiveCaptionText
-        Me.BackgroundImage = Global.Reto2Temperatura.My.Resources.Resources.nub
+        Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(800, 700)
-        Me.Controls.Add(Me.Label4)
-        Me.Controls.Add(Me.Label3)
-        Me.Controls.Add(Me.lblNombreCiudadActual)
+        Me.Controls.Add(Me.btAnadirEnInforme)
+        Me.Controls.Add(Me.panelPrevision)
+        Me.Controls.Add(Me.paneltexto)
         Me.Controls.Add(Me.Panel2)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.DataGridView1)
@@ -211,21 +262,28 @@ Partial Class Form1
         Me.Panel1.PerformLayout()
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
+        Me.paneltexto.ResumeLayout(False)
+        Me.paneltexto.PerformLayout()
+        Me.panelPrevision.ResumeLayout(False)
+        Me.panelPrevision.PerformLayout()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents btEnviarSeleccionados As Button
     Friend WithEvents Button3 As Button
     Friend WithEvents Label1 As Label
-    Friend WithEvents tbmirarciudad As TextBox
     Friend WithEvents Button4 As Button
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Panel2 As Panel
     Friend WithEvents Label2 As Label
     Friend WithEvents Panel3 As Panel
-    Friend WithEvents lblNombreCiudadActual As Label
-    Friend WithEvents Label3 As Label
-    Friend WithEvents Label4 As Label
+    Friend WithEvents lblTempActual As Label
+    Friend WithEvents paneltexto As FlowLayoutPanel
+    Friend WithEvents lblCiudadActual As Label
+    Friend WithEvents panelPrevision As FlowLayoutPanel
+    Friend WithEvents lblPrevision As Label
+    Friend WithEvents btAnadirEnInforme As Button
+    Friend WithEvents combobox As ComboBox
+    Friend WithEvents Button1 As Button
 End Class

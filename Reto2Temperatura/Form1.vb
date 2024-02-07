@@ -1,15 +1,29 @@
 ﻿Imports System.IO
 Imports System.Net
 Imports System.Net.Http
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports System.Xml
-Imports Dropbox.Api
-Imports Dropbox.Api.Files
-Imports Octokit
+Imports AngleSharp.Dom
+Imports CG.Web.MegaApiClient
+Imports MegaApiClient
+Imports Google.Apis.Drive.v3
+Imports INode = AngleSharp.Dom.INode
 
 Public Class Form1
 
     Private xmlDoc As New XmlDocument()
     Private carpetaTemporal As String
+
+    Dim temperaturaActual As String
+    Dim previsionActual As String
+    Dim fuerzaVientoActual As String
+    Dim ciudadActual As String
+
+
+    Dim carpetaXml As String = "../"
+    Dim carpetaTxt As String = "../txt/"
+    Dim megaUsername As String = "dam3.ekaitz.garduno@gmail.com"
+    Dim megaPassword As String = "@Sestao04"
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -19,67 +33,104 @@ Public Class Form1
         DataGridView1.Columns.Add("Previsión", "Previsión")
         DataGridView1.Columns.Add("FuerzaViento", "Fuerza del Viento km/h")
 
+        lblTempActual.Visible = False
+        paneltexto.BackColor = Nothing
+        lblCiudadActual.BackColor = Nothing
+        lblTempActual.BackColor = Nothing
+        lblPrevision.BackColor = Nothing
+        btAnadirEnInforme.Visible = False
+        panelPrevision.BackColor = Nothing
+
+        combobox.Items.Add("Bilbao")
+        combobox.Items.Add("Sestao")
+        combobox.Items.Add("Santander")
+        combobox.Items.Add("Vitoria-Gasteiz")
+
+        combobox.DropDownStyle = ComboBoxStyle.DropDownList
+
+        IniciarSesionMega()
+
+
     End Sub
 
     'TODOS LOS BOTONES QUE HAY Y SUS FUNCIONALIDADES
 
     Private Async Sub Button_Transformar_y_subir(sender As Object, e As EventArgs) Handles btEnviarSeleccionados.Click
-        Dim carpetaXml As String = "../"
-        Dim carpetaTxt As String = "../txt/"
-        Dim token As String = "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"
-        Dim owner As String = "ekagardu19"
-        Dim repo As String = "RetoTemperatura"
 
-        Await ConvertirXmlATxt(carpetaXml, carpetaTxt, token, owner, repo)
+        IniciarSesionMega()
+
+        lblCiudadActual.BackColor = Color.FromArgb(0, 0, 0, 0) ' Transparente
+        lblTempActual.BackColor = Color.FromArgb(0, 0, 0, 0)  ' Transparente
+        lblCiudadActual.ForeColor = Color.White
+        lblTempActual.ForeColor = Color.White
+        paneltexto.BackColor = Color.FromArgb(0, 0, 0, 0)
+        panelPrevision.BackColor = Color.FromArgb(0, 0, 0, 0)
+
+        Await ConvertirXmlATxt(carpetaXml, carpetaTxt)
+
+
 
     End Sub
 
     Private Sub Button_Mirar_Prevision_de_una_Ciudad(sender As Object, e As EventArgs) Handles Button3.Click
         'Obtenemos la ciudad introducida por el usuario desde el TextBox
-        Dim ciudad As String = tbmirarciudad.Text.Trim()
+        ciudadActual = combobox.Text.Trim
+
 
         ' Verificamos que la ciudad no esté vacía
-        If String.IsNullOrEmpty(ciudad) Then
+        If String.IsNullOrEmpty(ciudadActual) Then
             MessageBox.Show("Por favor, ingrese una ciudad antes de consultar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
-
-        ' Establecemos la dirección URL de la API y los parámetros de consulta con la ciudad introducida
         Dim apiUrl As String = "http://api.weatherapi.com/v1/current.xml"
         Dim key As String = "8d7ea9fe295245d7a33122706243001"
-        Dim query As String = $"?key={key}&q={ciudad}&days=7&lang=es"
+        Dim query As String = $"?key={key}&q={ciudadActual}&days=7&lang=es"
 
         Try
-            Dim titulo As String = ciudad & ".xml"
+            lblTempActual.Visible = True
+
             xmlDoc = New XmlDocument()
-            ' Cargamos el documento XML desde la API usando el método Load
             xmlDoc.Load(apiUrl & query)
 
-            ' Accedemos a los elementos y atributos del documento XML usando el método SelectSingleNode o SelectNodes
-            Dim root As XmlNode = xmlDoc.DocumentElement ' Obtiene el elemento raíz
+            Dim root As XmlNode = xmlDoc.DocumentElement
 
-            ' Accede a los elementos específicos del XML que deseas mostrar en el DataGridView
+
             Dim temperatureNode As XmlNode = root.SelectSingleNode("//temp_c")
-            Dim temperatura As String = temperatureNode.InnerText
+            temperaturaActual = temperatureNode.InnerText
 
             Dim conditionNode As XmlNode = root.SelectSingleNode("//condition/text")
-            Dim previsión As String = conditionNode.InnerText
+            previsionActual = conditionNode.InnerText
 
             Dim windNode As XmlNode = root.SelectSingleNode("//wind_kph")
-            Dim fuerzaViento As String = windNode.InnerText
+            fuerzaVientoActual = windNode.InnerText
 
-            ' Agrega una nueva fila al DataGridView con los datos obtenidos
-            DataGridView1.Rows.Add(ciudad, temperatura, previsión, fuerzaViento)
+            lblCiudadActual.Text = ciudadActual.ToUpper
+            lblTempActual.Text = temperaturaActual + " ºC"
+            lblPrevision.Text = previsionActual
 
-            ' Guarda los datos en un archivo XML en la carpeta temporal
-            ' GuardarDatosCiudadEnXML(ciudad, temperatura, previsión, fuerzaViento)
-            tbmirarciudad.Text = ""
-            xmlDoc.Save("../" & titulo)
+            If previsionActual.IndexOf("Soleado", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.soleado
+            ElseIf previsionActual.IndexOf("nublado", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.nub
+            ElseIf previsionActual.IndexOf("despejado", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.despejado
+            ElseIf previsionActual.IndexOf("lluvia", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.lluvia
+            ElseIf previsionActual.IndexOf("neblina", StringComparison.OrdinalIgnoreCase) >= 0 Or previsionActual.IndexOf("niebla", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.niebla
+            ElseIf previsionActual.IndexOf("lluvia", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.lluvia
+            End If
+
+            lblCiudadActual.BackColor = Color.FromArgb(0, 0, 0, 0)
+            lblTempActual.BackColor = Color.FromArgb(0, 0, 0, 0)
+            paneltexto.BackColor = Color.FromArgb(0, 0, 0, 0)
+            panelPrevision.BackColor = Color.FromArgb(0, 0, 0, 0)
+            btAnadirEnInforme.Visible = True
 
         Catch ex As Exception
             MessageBox.Show($"Error al obtener la información del tiempo: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-
 
     End Sub
 
@@ -100,6 +151,13 @@ Public Class Form1
                         File.Delete(rutaArchivoXML)
                     End If
 
+                    ' Eliminar el archivo XML correspondiente
+                    Dim rutaArchivotxt As String = Path.Combine("../txt/", titulo & ".txt")
+                    If File.Exists(rutaArchivotxt) Then
+                        File.Delete(rutaArchivotxt)
+                    End If
+
+
                     ' Eliminar la fila del DataGridView
                     DataGridView1.Rows.Remove(selectedRow)
                 Next
@@ -109,14 +167,16 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub Button_Salir(sender As Object, e As EventArgs)
+    Private Sub Button_Salir(sender As Object, e As EventArgs) Handles Button1.Click
         Close()
+    End Sub
+    Private Sub btAnadirEnInforme_Click(sender As Object, e As EventArgs) Handles btAnadirEnInforme.Click
+        anadirTiempoEnInforme()
     End Sub
 
     '---------------------------------------------------------- FUNCIONALIDADES --------------------------------------------------------------------
 
-
-    Private Async Function ConvertirXmlATxt(ByVal carpetaXml As String, ByVal carpetaTxt As String, ByVal token As String, ByVal owner As String, ByVal repo As String) As Task
+    Private Async Function ConvertirXmlATxt(ByVal carpetaXml As String, ByVal carpetaTxt As String) As Task
         ' Obtener la lista de archivos XML en la carpeta
         Dim archivosXml As String() = Directory.GetFiles(carpetaXml, "*.xml")
 
@@ -139,36 +199,41 @@ Public Class Form1
                 ' Mensaje de éxito
                 Console.WriteLine($"Se convirtió '{archivoXml}' a '{archivoTxt}'")
 
-                ' Subir el archivo de texto a GitHub
-                Await SubirArchivoAGitHub(archivoTxt, token, owner, repo)
             Catch ex As Exception
                 ' Manejar errores
                 Console.WriteLine($"Error al convertir '{archivoXml}': {ex.Message}")
             End Try
         Next
 
+
         MessageBox.Show("Proceso de conversión completado.")
     End Function
 
-    Private Async Function SubirArchivoAGitHub(ByVal archivoTxt As String, ByVal token As String, ByVal owner As String, ByVal repo As String) As Task
-        Using client As New HttpClient()
-            client.DefaultRequestHeaders.Authorization = New System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token)
+    Private Sub anadirTiempoEnInforme()
 
-            Dim fileContent As Byte() = File.ReadAllBytes(archivoTxt)
-            Dim content As New MultipartFormDataContent()
-            content.Add(New ByteArrayContent(fileContent), "file", Path.GetFileName(archivoTxt))
-
-            Dim response = Await client.PutAsync($"https://api.github.com/repos/{owner}/{repo}/contents/{Path.GetFileName(archivoTxt)}", content)
-
-            If response.IsSuccessStatusCode Then
-                MessageBox.Show($"Archivo '{archivoTxt}' subido exitosamente a GitHub.")
-            Else
-                MessageBox.Show($"Error al subir archivo '{archivoTxt}' a GitHub: {response.StatusCode} - {response.ReasonPhrase}")
-            End If
-        End Using
-    End Function
-
-    Private Sub Label3_Click(sender As Object, e As EventArgs) Handles Label3.Click
+        DataGridView1.Rows.Add(ciudadActual, temperaturaActual, previsionActual, fuerzaVientoActual)
+        xmlDoc.Save("../" & ciudadActual & ".xml")
 
     End Sub
+
+    Private Sub IniciarSesionMega()
+        Dim carpetaTxt As String = "../txt/"
+        Dim megaApiClient As New MegaApiClient()
+        Try
+            megaApiClient.Login(megaUsername, megaPassword)
+            SubirArchivoAMega(megaApiClient, carpetaTxt)
+            megaApiClient.Logout()
+        Catch ex As Exception
+            Console.WriteLine("Error: " & ex.Message)
+        End Try
+    End Sub
+    Sub SubirArchivoAMega(ByVal megaApiClient As MegaApiClient, ByVal filePath As String)
+        Using fileStream As New FileStream(filePath, FileMode.Open)
+            Dim fileName As String = Path.GetFileName(filePath)
+            Dim parentNode As INode = megaApiClient.GetNodes().First()
+            megaApiClient.Upload(fileStream, fileName, parentNode)
+        End Using
+        MessageBox.Show("Archivo subido exitosamente a Mega.")
+    End Sub
+
 End Class
