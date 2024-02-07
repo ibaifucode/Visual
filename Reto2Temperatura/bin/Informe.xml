@@ -1,0 +1,17 @@
+<Ciudades>
+  <Ciudad Nombre="Sestao">
+    <Temperatura>12</Temperatura>
+    <Prevision>Parcialmente nublado</Prevision>
+    <FuerzaViento>22</FuerzaViento>
+  </Ciudad>
+  <Ciudad Nombre="Santander">
+    <Temperatura>18</Temperatura>
+    <Prevision>Despejado</Prevision>
+    <FuerzaViento>29.9</FuerzaViento>
+  </Ciudad>
+  <Ciudad Nombre="Vitoria-Gasteiz">
+    <Temperatura>12</Temperatura>
+    <Prevision>Parcialmente nublado</Prevision>
+    <FuerzaViento>22</FuerzaViento>
+  </Ciudad>
+</Ciudades>

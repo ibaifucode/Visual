@@ -266,15 +266,14 @@ Public Class Form1
             raizFusionada.AppendChild(nodoImportado)
         Next
 
-        ' Obtener la fecha actual para incluir en el nombre del archivo
-        Dim fechaActual As String = DateTime.Now.ToString("yyyyMMdd")
 
-        ' Guardar el documento fusionado en un nuevo archivo XML con nombre 'Informe+FechaActual.xml'
-        Dim archivoXmlFusionado As String = Path.Combine(carpetaTxt, $"Informe_{fechaActual}.xml")
+
+        ' Guardar el documento fusionado en un nuevo archivo XML con nombre 'Informe+.xml'
+        Dim archivoXmlFusionado As String = Path.Combine(carpetaTxt, $"Inform.xml")
         xmlFusionado.Save(archivoXmlFusionado)
 
-        ' Convertir el archivo XML fusionado a un archivo de texto con nombre 'Informe+FechaActual.txt'
-        Dim archivoTxt As String = Path.Combine(carpetaTxt, $"Informe_{fechaActual}.txt")
+        ' Convertir el archivo XML fusionado a un archivo de texto con nombre 'Informe+.txt'
+        Dim archivoTxt As String = Path.Combine(carpetaTxt, $"Informe.txt")
         Using writer As New StreamWriter(archivoTxt)
             ' Escribir el contenido XML en el archivo de texto
             writer.Write(xmlFusionado.OuterXml)
@@ -290,11 +289,9 @@ Public Class Form1
 
 
     Private Sub anadirTiempoEnInforme()
-        ' Obtener la fecha actual para incluir en el nombre del archivo
-        Dim fechaActual As String = DateTime.Now.ToString("yyyyMMdd")
 
-        ' Crear el nombre del archivo XML con nombre 'Informe+FechaActual.xml'
-        Dim archivoXml As String = Path.Combine(carpetaXml, $"Informe_{fechaActual}.xml")
+        ' Crear el nombre del archivo XML con nombre 'Informe.xml'
+        Dim archivoXml As String = Path.Combine(carpetaXml, $"Informe.xml")
 
         ' Verificar si el archivo XML ya existe
         Dim nuevoXmlDoc As New XmlDocument()
@@ -369,7 +366,7 @@ Public Class Form1
     Public Async Function UploadFile(nombrearchivo As String) As Task
 
         Console.WriteLine(nombrearchivo)
-        Using dropboxClient = New DropboxClient("sl.BvJofSY6v4BGKPPIJpyK_vZxGAX_dzXXziWaq7uCUDVtIF-BLZ-hbrWzckrE4LKev4jjA8kUemts3CGq7Bza3y5oXPlUs9DTwqEfyn8srvTY_M64IzUVVUHamYw9-3USvlFyrMTdShFWAZgMFhPk3fs")
+        Using dropboxClient = New DropboxClient("sl.BvJIpoOuWlmWqVSq83LhZAr7eVubHVTPT2oLdWJMWfnhbHswvRY_n5LHVebIMc70VfUc1-K4mFBCQit8R2Y31CfkLTz1wewJ4MjCRewkDkwoo4gkTOMRxp67CzatB6fDLn0R1MJllfLFkgKwLUp_q50")
             Using fileStream = File.Open(URLarchivoXML, FileMode.Open)
                 Dim response = Await dropboxClient.Files.UploadAsync(
                 "/" & Path.GetFileName(nombrearchivo),
@@ -379,14 +376,6 @@ Public Class Form1
         End Using
     End Function
 
-    Sub SubirArchivoAMega(ByVal megaApiClient As MegaApiClient, ByVal filePath As String)
-        Using fileStream As New FileStream(filePath, FileMode.Open)
-            Dim fileName As String = Path.GetFileName(filePath)
-            Dim parentNode = megaApiClient.GetNodes().First()
-            megaApiClient.Upload(fileStream, fileName, parentNode)
-        End Using
 
-        MessageBox.Show("Archivo subido exitosamente a Mega.")
-    End Sub
 
 End Class
