@@ -63,9 +63,29 @@ Namespace My.Resources
         '''<summary>
         '''  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         '''</summary>
-        Friend ReadOnly Property _0aa316fa_26fc_4b75_9c44_815ab63bc515() As System.Drawing.Bitmap
+        Friend ReadOnly Property despejado() As System.Drawing.Bitmap
             Get
-                Dim obj As Object = ResourceManager.GetObject("_0aa316fa-26fc-4b75-9c44-815ab63bc515", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("despejado", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property lluvia() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("lluvia", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property niebla() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("niebla", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -83,9 +103,9 @@ Namespace My.Resources
         '''<summary>
         '''  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         '''</summary>
-        Friend ReadOnly Property nublado() As System.Drawing.Bitmap
+        Friend ReadOnly Property soleado() As System.Drawing.Bitmap
             Get
-                Dim obj As Object = ResourceManager.GetObject("nublado", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("soleado", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

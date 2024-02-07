@@ -1,15 +1,30 @@
 ﻿Imports System.IO
 Imports System.Net
 Imports System.Net.Http
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports System.Xml
-Imports Dropbox.Api
-Imports Dropbox.Api.Files
-Imports Octokit
+Imports AngleSharp.Dom
+Imports CG.Web.MegaApiClient
+Imports Google.Apis.Drive.v3
+Imports INode = AngleSharp.Dom.INode
 
 Public Class Form1
 
     Private xmlDoc As New XmlDocument()
     Private carpetaTemporal As String
+
+    Dim temperaturaActual As String
+    Dim previsionActual As String
+    Dim fuerzaVientoActual As String
+    Dim ciudadActual As String
+
+
+    Dim carpetaXml As String = "../"
+    Dim carpetaTxt As String = "../txt/"
+    Dim megaUsername As String = "dam3.ibai.fuentes@gmail.com"
+    Dim megaPassword As String = "ibi20033"
+
+    Dim URLarchivoXML As String
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -19,67 +34,140 @@ Public Class Form1
         DataGridView1.Columns.Add("Previsión", "Previsión")
         DataGridView1.Columns.Add("FuerzaViento", "Fuerza del Viento km/h")
 
+        lblTempActual.Visible = False
+        paneltexto.BackColor = Nothing
+        lblCiudadActual.BackColor = Nothing
+        lblTempActual.BackColor = Nothing
+        lblPrevision.BackColor = Nothing
+        btAnadirEnInforme.Visible = False
+        panelPrevision.BackColor = Nothing
+
+        combobox.Items.Add("Bilbao")
+        combobox.Items.Add("Sestao")
+        combobox.Items.Add("Santander")
+        combobox.Items.Add("Vitoria-Gasteiz")
+
+        combobox.DropDownStyle = ComboBoxStyle.DropDownList
+
+        CargarArchivosXml()
+
+
+
+    End Sub
+
+    Private Sub CargarArchivosXml()
+        ' Obtener la lista de archivos XML en la carpeta
+        Try
+            URLarchivoXML = Directory.GetFiles(carpetaXml, "*.xml")(0)
+
+            ' Cargar el archivo XML
+            Dim xmlDoc As New XmlDocument()
+            xmlDoc.Load(URLarchivoXML)
+
+            ' Obtener información del XML para añadir al DataGridView
+            Dim ciudadNodes As XmlNodeList = xmlDoc.SelectNodes("/Ciudades/Ciudad")
+            If ciudadNodes.Count > 0 Then
+                For Each ciudadNode As XmlNode In ciudadNodes
+                    Dim ciudad As String = ciudadNode.Attributes("Nombre")?.Value
+                    Dim temperatura As String = ciudadNode.SelectSingleNode("Temperatura")?.InnerText
+                    Dim prevision As String = ciudadNode.SelectSingleNode("Prevision")?.InnerText
+                    Dim fuerzaViento As String = ciudadNode.SelectSingleNode("FuerzaViento")?.InnerText
+
+                    ' Añadir la información al DataGridView
+                    DataGridView1.Rows.Add(ciudad, temperatura, prevision, fuerzaViento)
+
+                    ' Mensaje de éxito
+                    Console.WriteLine($"Se cargó '{URLarchivoXML}' correctamente.")
+                Next
+            End If
+
+        Catch xmlEx As XmlException
+            ' Manejar errores relacionados con XML
+            Console.WriteLine($"Error al cargar XML en '{URLarchivoXML}': {xmlEx.Message}")
+
+        Catch ex As Exception
+            ' Manejar otros errores
+            Console.WriteLine($"Error al procesar '{URLarchivoXML}': {ex.Message}")
+        End Try
     End Sub
 
     'TODOS LOS BOTONES QUE HAY Y SUS FUNCIONALIDADES
 
-    Private Async Sub Button_Transformar_y_subir(sender As Object, e As EventArgs) Handles btEnviarSeleccionados.Click
-        Dim carpetaXml As String = "../"
-        Dim carpetaTxt As String = "../txt/"
-        Dim token As String = "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"
-        Dim owner As String = "ekagardu19"
-        Dim repo As String = "RetoTemperatura"
+    Private Sub Button_Transformar_y_subir(sender As Object, e As EventArgs) Handles btEnviarSeleccionados.Click
 
-        Await ConvertirXmlATxt(carpetaXml, carpetaTxt, token, owner, repo)
+
+        lblCiudadActual.BackColor = Color.FromArgb(0, 0, 0, 0) ' Transparente
+        lblTempActual.BackColor = Color.FromArgb(0, 0, 0, 0)  ' Transparente
+        lblCiudadActual.ForeColor = Color.White
+        lblTempActual.ForeColor = Color.White
+        paneltexto.BackColor = Color.FromArgb(0, 0, 0, 0)
+        panelPrevision.BackColor = Color.FromArgb(0, 0, 0, 0)
+
+        publicarInforme(carpetaXml, carpetaTxt)
+
+
 
     End Sub
 
     Private Sub Button_Mirar_Prevision_de_una_Ciudad(sender As Object, e As EventArgs) Handles Button3.Click
         'Obtenemos la ciudad introducida por el usuario desde el TextBox
-        Dim ciudad As String = tbmirarciudad.Text.Trim()
+        ciudadActual = combobox.Text.Trim
+
 
         ' Verificamos que la ciudad no esté vacía
-        If String.IsNullOrEmpty(ciudad) Then
+        If String.IsNullOrEmpty(ciudadActual) Then
             MessageBox.Show("Por favor, ingrese una ciudad antes de consultar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
-
-        ' Establecemos la dirección URL de la API y los parámetros de consulta con la ciudad introducida
         Dim apiUrl As String = "http://api.weatherapi.com/v1/current.xml"
         Dim key As String = "8d7ea9fe295245d7a33122706243001"
-        Dim query As String = $"?key={key}&q={ciudad}&days=7&lang=es"
+        Dim query As String = $"?key={key}&q={ciudadActual}&days=7&lang=es"
 
         Try
-            Dim titulo As String = ciudad & ".xml"
+            lblTempActual.Visible = True
+
             xmlDoc = New XmlDocument()
-            ' Cargamos el documento XML desde la API usando el método Load
             xmlDoc.Load(apiUrl & query)
 
-            ' Accedemos a los elementos y atributos del documento XML usando el método SelectSingleNode o SelectNodes
-            Dim root As XmlNode = xmlDoc.DocumentElement ' Obtiene el elemento raíz
+            Dim root As XmlNode = xmlDoc.DocumentElement
 
-            ' Accede a los elementos específicos del XML que deseas mostrar en el DataGridView
+
             Dim temperatureNode As XmlNode = root.SelectSingleNode("//temp_c")
-            Dim temperatura As String = temperatureNode.InnerText
+            temperaturaActual = temperatureNode.InnerText
 
             Dim conditionNode As XmlNode = root.SelectSingleNode("//condition/text")
-            Dim previsión As String = conditionNode.InnerText
+            previsionActual = conditionNode.InnerText
 
             Dim windNode As XmlNode = root.SelectSingleNode("//wind_kph")
-            Dim fuerzaViento As String = windNode.InnerText
+            fuerzaVientoActual = windNode.InnerText
 
-            ' Agrega una nueva fila al DataGridView con los datos obtenidos
-            DataGridView1.Rows.Add(ciudad, temperatura, previsión, fuerzaViento)
+            lblCiudadActual.Text = ciudadActual.ToUpper
+            lblTempActual.Text = temperaturaActual + " ºC"
+            lblPrevision.Text = previsionActual
 
-            ' Guarda los datos en un archivo XML en la carpeta temporal
-            ' GuardarDatosCiudadEnXML(ciudad, temperatura, previsión, fuerzaViento)
-            tbmirarciudad.Text = ""
-            xmlDoc.Save("../" & titulo)
+            If previsionActual.IndexOf("Soleado", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.soleado
+            ElseIf previsionActual.IndexOf("nublado", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.nub
+            ElseIf previsionActual.IndexOf("despejado", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.despejado
+            ElseIf previsionActual.IndexOf("lluvia", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.lluvia
+            ElseIf previsionActual.IndexOf("neblina", StringComparison.OrdinalIgnoreCase) >= 0 Or previsionActual.IndexOf("niebla", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.niebla
+            ElseIf previsionActual.IndexOf("lluvia", StringComparison.OrdinalIgnoreCase) >= 0 Then
+                Me.BackgroundImage = My.Resources.lluvia
+            End If
+
+            lblCiudadActual.BackColor = Color.FromArgb(0, 0, 0, 0)
+            lblTempActual.BackColor = Color.FromArgb(0, 0, 0, 0)
+            paneltexto.BackColor = Color.FromArgb(0, 0, 0, 0)
+            panelPrevision.BackColor = Color.FromArgb(0, 0, 0, 0)
+            btAnadirEnInforme.Visible = True
 
         Catch ex As Exception
             MessageBox.Show($"Error al obtener la información del tiempo: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-
 
     End Sub
 
@@ -92,16 +180,13 @@ Public Class Form1
             If result = DialogResult.Yes Then
                 ' Eliminamos todas las filas seleccionadas
                 For Each selectedRow As DataGridViewRow In DataGridView1.SelectedRows
-                    Dim titulo As String = selectedRow.Cells("Ciudad").Value.ToString()
-
-                    ' Eliminar el archivo XML correspondiente
-                    Dim rutaArchivoXML As String = Path.Combine("../", titulo & ".xml")
-                    If File.Exists(rutaArchivoXML) Then
-                        File.Delete(rutaArchivoXML)
-                    End If
+                    Dim ciudadEliminar As String = selectedRow.Cells("Ciudad").Value.ToString()
 
                     ' Eliminar la fila del DataGridView
                     DataGridView1.Rows.Remove(selectedRow)
+
+                    ' Eliminar la información del archivo XML
+                    EliminarCiudadDeXML(ciudadEliminar)
                 Next
             End If
         Else
@@ -109,16 +194,37 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub Button_Salir(sender As Object, e As EventArgs)
+    Private Sub EliminarCiudadDeXML(ciudadEliminar As String)
+
+        xmlDoc.Load(URLarchivoXML)
+
+        ' Buscar el nodo de la ciudad a eliminar
+        Dim nodoCiudadEliminar As XmlNode = xmlDoc.SelectSingleNode($"/Ciudades/Ciudad[@Nombre='{ciudadEliminar}']")
+
+        ' Si se encuentra el nodo, eliminarlo
+        If nodoCiudadEliminar IsNot Nothing Then
+            nodoCiudadEliminar.ParentNode.RemoveChild(nodoCiudadEliminar)
+            ' Guardar el XML actualizado
+            xmlDoc.Save(URLarchivoXML)
+        End If
+    End Sub
+
+
+    Private Sub Button_Salir(sender As Object, e As EventArgs) Handles Button1.Click
         Close()
+    End Sub
+    Private Sub btAnadirEnInforme_Click(sender As Object, e As EventArgs) Handles btAnadirEnInforme.Click
+        anadirTiempoEnInforme()
     End Sub
 
     '---------------------------------------------------------- FUNCIONALIDADES --------------------------------------------------------------------
 
-
-    Private Async Function ConvertirXmlATxt(ByVal carpetaXml As String, ByVal carpetaTxt As String, ByVal token As String, ByVal owner As String, ByVal repo As String) As Task
+    Private Sub PublicarInforme(ByVal carpetaXml As String, ByVal carpetaTxt As String)
         ' Obtener la lista de archivos XML en la carpeta
         Dim archivosXml As String() = Directory.GetFiles(carpetaXml, "*.xml")
+
+        ' Crear una lista para almacenar los documentos XML fusionados
+        Dim documentosFusionados As New List(Of XmlDocument)()
 
         ' Recorrer cada archivo XML
         For Each archivoXml As String In archivosXml
@@ -127,48 +233,173 @@ Public Class Form1
                 Dim xmlDoc As New XmlDocument()
                 xmlDoc.Load(archivoXml)
 
-                ' Crear un nombre de archivo de texto basado en el archivo XML
-                Dim archivoTxt As String = Path.Combine(carpetaTxt, Path.GetFileNameWithoutExtension(archivoXml) & ".txt")
-
-                ' Crear un escritor de texto para el archivo de texto
-                Using writer As New StreamWriter(archivoTxt)
-                    ' Escribir el contenido XML en el archivo de texto
-                    writer.Write(xmlDoc.OuterXml)
-                End Using
+                ' Agregar el documento XML a la lista
+                documentosFusionados.Add(xmlDoc)
 
                 ' Mensaje de éxito
-                Console.WriteLine($"Se convirtió '{archivoXml}' a '{archivoTxt}'")
+                Console.WriteLine($"Se cargó '{archivoXml}' correctamente.")
 
-                ' Subir el archivo de texto a GitHub
-                Await SubirArchivoAGitHub(archivoTxt, token, owner, repo)
+            Catch xmlEx As XmlException
+                ' Manejar errores relacionados con XML
+                Console.WriteLine($"Error al cargar XML en '{archivoXml}': {xmlEx.Message}")
+
             Catch ex As Exception
-                ' Manejar errores
-                Console.WriteLine($"Error al convertir '{archivoXml}': {ex.Message}")
+                ' Manejar otros errores
+                Console.WriteLine($"Error al procesar '{archivoXml}': {ex.Message}")
             End Try
         Next
 
-        MessageBox.Show("Proceso de conversión completado.")
-    End Function
+        ' Fusionar todos los documentos XML en uno solo
+        Dim xmlFusionado As New XmlDocument()
 
-    Private Async Function SubirArchivoAGitHub(ByVal archivoTxt As String, ByVal token As String, ByVal owner As String, ByVal repo As String) As Task
-        Using client As New HttpClient()
-            client.DefaultRequestHeaders.Authorization = New System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token)
+        ' Crear el elemento raíz del documento fusionado
+        Dim raizFusionada As XmlElement = xmlFusionado.CreateElement("RaizFusionada")
+        xmlFusionado.AppendChild(raizFusionada)
 
-            Dim fileContent As Byte() = File.ReadAllBytes(archivoTxt)
-            Dim content As New MultipartFormDataContent()
-            content.Add(New ByteArrayContent(fileContent), "file", Path.GetFileName(archivoTxt))
+        ' Agregar cada documento a la raíz fusionada
+        For Each documento In documentosFusionados
+            Dim nodoImportado As XmlNode = xmlFusionado.ImportNode(documento.DocumentElement, True)
+            raizFusionada.AppendChild(nodoImportado)
+        Next
 
-            Dim response = Await client.PutAsync($"https://api.github.com/repos/{owner}/{repo}/contents/{Path.GetFileName(archivoTxt)}", content)
+        ' Obtener la fecha actual para incluir en el nombre del archivo
+        Dim fechaActual As String = DateTime.Now.ToString("yyyyMMdd")
 
-            If response.IsSuccessStatusCode Then
-                MessageBox.Show($"Archivo '{archivoTxt}' subido exitosamente a GitHub.")
-            Else
-                MessageBox.Show($"Error al subir archivo '{archivoTxt}' a GitHub: {response.StatusCode} - {response.ReasonPhrase}")
-            End If
+        ' Guardar el documento fusionado en un nuevo archivo XML con nombre 'Informe+FechaActual.xml'
+        Dim archivoXmlFusionado As String = Path.Combine(carpetaTxt, $"Informe_{fechaActual}.xml")
+        xmlFusionado.Save(archivoXmlFusionado)
+
+        ' Convertir el archivo XML fusionado a un archivo de texto con nombre 'Informe+FechaActual.txt'
+        Dim archivoTxt As String = Path.Combine(carpetaTxt, $"Informe_{fechaActual}.txt")
+        Using writer As New StreamWriter(archivoTxt)
+            ' Escribir el contenido XML en el archivo de texto
+            writer.Write(xmlFusionado.OuterXml)
         End Using
-    End Function
 
-    Private Sub Label3_Click(sender As Object, e As EventArgs) Handles Label3.Click
+        ' Publicar en Mega
+        PublicarMega(archivoTxt)
 
+        ' Mensaje de éxito
+        Console.WriteLine($"Se fusionaron los archivos XML y se creó '{archivoXmlFusionado}' y '{archivoTxt}'")
+        MessageBox.Show("Proceso de conversión y fusión completado.")
     End Sub
+
+
+    Private Sub anadirTiempoEnInforme()
+        ' Obtener la fecha actual para incluir en el nombre del archivo
+        Dim fechaActual As String = DateTime.Now.ToString("yyyyMMdd")
+
+        ' Crear el nombre del archivo XML con nombre 'Informe+FechaActual.xml'
+        Dim archivoXml As String = Path.Combine(carpetaXml, $"Informe_{fechaActual}.xml")
+
+        ' Verificar si el archivo XML ya existe
+        Dim nuevoXmlDoc As New XmlDocument()
+
+        If File.Exists(archivoXml) Then
+            ' Si el archivo existe, cargar el documento existente
+            nuevoXmlDoc.Load(archivoXml)
+
+            ' Buscar el nodo Ciudad con el mismo nombre
+            Dim nodoCiudadExistente As XmlNode = nuevoXmlDoc.SelectSingleNode($"//Ciudad[@Nombre='{ciudadActual}']")
+
+            If nodoCiudadExistente IsNot Nothing Then
+                ' Si la ciudad ya existe, sobrescribir la información
+                nodoCiudadExistente.SelectSingleNode("Temperatura").InnerText = temperaturaActual
+                nodoCiudadExistente.SelectSingleNode("Prevision").InnerText = previsionActual
+                nodoCiudadExistente.SelectSingleNode("FuerzaViento").InnerText = fuerzaVientoActual
+            Else
+                ' Si la ciudad no existe, crear un nuevo nodo Ciudad
+                Dim nuevoNodoCiudad As XmlElement = nuevoXmlDoc.CreateElement("Ciudad")
+                nuevoNodoCiudad.SetAttribute("Nombre", ciudadActual)
+                nuevoXmlDoc.DocumentElement.AppendChild(nuevoNodoCiudad)
+
+                Dim nodoTemperatura As XmlElement = nuevoXmlDoc.CreateElement("Temperatura")
+                nodoTemperatura.InnerText = temperaturaActual
+                nuevoNodoCiudad.AppendChild(nodoTemperatura)
+
+                Dim nodoPrevision As XmlElement = nuevoXmlDoc.CreateElement("Prevision")
+                nodoPrevision.InnerText = previsionActual
+                nuevoNodoCiudad.AppendChild(nodoPrevision)
+
+                Dim nodoFuerzaViento As XmlElement = nuevoXmlDoc.CreateElement("FuerzaViento")
+                nodoFuerzaViento.InnerText = fuerzaVientoActual
+                nuevoNodoCiudad.AppendChild(nodoFuerzaViento)
+            End If
+        Else
+            ' Si el archivo no existe, crear un nuevo documento XML con el elemento raíz
+            Dim raizNuevoDocumento As XmlElement = nuevoXmlDoc.CreateElement("Ciudades")
+            nuevoXmlDoc.AppendChild(raizNuevoDocumento)
+
+            ' Crear un nuevo nodo Ciudad
+            Dim nuevoNodoCiudad As XmlElement = nuevoXmlDoc.CreateElement("Ciudad")
+            nuevoNodoCiudad.SetAttribute("Nombre", ciudadActual)
+            raizNuevoDocumento.AppendChild(nuevoNodoCiudad)
+
+            Dim nodoTemperatura As XmlElement = nuevoXmlDoc.CreateElement("Temperatura")
+            nodoTemperatura.InnerText = temperaturaActual
+            nuevoNodoCiudad.AppendChild(nodoTemperatura)
+
+            Dim nodoPrevision As XmlElement = nuevoXmlDoc.CreateElement("Prevision")
+            nodoPrevision.InnerText = previsionActual
+            nuevoNodoCiudad.AppendChild(nodoPrevision)
+
+            Dim nodoFuerzaViento As XmlElement = nuevoXmlDoc.CreateElement("FuerzaViento")
+            nodoFuerzaViento.InnerText = fuerzaVientoActual
+            nuevoNodoCiudad.AppendChild(nodoFuerzaViento)
+        End If
+
+        ' Guardar el documento XML actualizado
+        nuevoXmlDoc.Save(archivoXml)
+
+        ' Añadir la información al DataGridView
+        DataGridView1.Rows.Clear()
+        CargarArchivosXml()
+
+
+        ' Mensaje de éxito
+        Console.WriteLine($"Se añadió la información al archivo '{archivoXml}' y al DataGridView.")
+    End Sub
+
+
+
+    Private Sub PublicarMega(archivo As String)
+        Dim carpetaTxt As String = archivo
+
+        Dim megaApiClient As New MegaApiClient()
+
+        Try
+            megaApiClient.Login(megaUsername, megaPassword)
+
+            ' Obtener el nombre del archivo sin la ruta completa
+            Dim fileName As String = Path.GetFileName(archivo)
+
+            ' Obtener todos los nodos en la carpeta de Mega
+            Dim megaNodes = megaApiClient.GetNodes()
+
+            ' Verificar si ya existe un archivo con el mismo nombre
+            Dim existingNode = megaNodes.FirstOrDefault(Function(node) node.Name = fileName)
+
+            If existingNode IsNot Nothing Then
+                megaApiClient.Delete(existingNode, True)
+            End If
+
+            ' Subir el nuevo archivo
+            SubirArchivoAMega(megaApiClient, carpetaTxt)
+
+            megaApiClient.Logout()
+        Catch ex As Exception
+            Console.WriteLine("Error: " & ex.Message)
+        End Try
+    End Sub
+
+    Sub SubirArchivoAMega(ByVal megaApiClient As MegaApiClient, ByVal filePath As String)
+        Using fileStream As New FileStream(filePath, FileMode.Open)
+            Dim fileName As String = Path.GetFileName(filePath)
+            Dim parentNode = megaApiClient.GetNodes().First()
+            megaApiClient.Upload(fileStream, fileName, parentNode)
+        End Using
+
+        MessageBox.Show("Archivo subido exitosamente a Mega.")
+    End Sub
+
 End Class

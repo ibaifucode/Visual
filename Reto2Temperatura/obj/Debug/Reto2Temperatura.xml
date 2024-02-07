@@ -22,7 +22,27 @@ Reto2Temperatura
   búsquedas de recursos mediante esta clase de recurso fuertemente tipado.
 </summary>
 </member>
-<member name="P:Reto2Temperatura.My.Resources.Resources._0aa316fa_26fc_4b75_9c44_815ab63bc515">
+<member name="P:Reto2Temperatura.My.Resources.Resources.despejado">
+<summary>
+  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Reto2Temperatura.My.Resources.Resources.lluvia">
+<summary>
+  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Reto2Temperatura.My.Resources.Resources.niebla">
+<summary>
+  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Reto2Temperatura.My.Resources.Resources.nub">
+<summary>
+  Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Reto2Temperatura.My.Resources.Resources.soleado">
 <summary>
   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
 </summary>
