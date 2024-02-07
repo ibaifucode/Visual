@@ -29,6 +29,7 @@ Partial Class Form1
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Button4 = New System.Windows.Forms.Button()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.combobox = New System.Windows.Forms.ComboBox()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.Panel2 = New System.Windows.Forms.Panel()
@@ -39,7 +40,6 @@ Partial Class Form1
         Me.panelPrevision = New System.Windows.Forms.FlowLayoutPanel()
         Me.lblPrevision = New System.Windows.Forms.Label()
         Me.btAnadirEnInforme = New System.Windows.Forms.Button()
-        Me.Button1 = New System.Windows.Forms.Button()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel1.SuspendLayout()
         Me.Panel2.SuspendLayout()
@@ -71,6 +71,7 @@ Partial Class Form1
         Me.DataGridView1.Location = New System.Drawing.Point(-6, 430)
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.ReadOnly = True
+        Me.DataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
         Me.DataGridView1.Size = New System.Drawing.Size(807, 269)
         Me.DataGridView1.TabIndex = 1
         '
@@ -127,6 +128,16 @@ Partial Class Form1
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(800, 43)
         Me.Panel1.TabIndex = 8
+        '
+        'Button1
+        '
+        Me.Button1.BackColor = System.Drawing.SystemColors.HighlightText
+        Me.Button1.Location = New System.Drawing.Point(746, 10)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(51, 22)
+        Me.Button1.TabIndex = 12
+        Me.Button1.Text = "Salir"
+        Me.Button1.UseVisualStyleBackColor = False
         '
         'combobox
         '
@@ -231,16 +242,6 @@ Partial Class Form1
         Me.btAnadirEnInforme.TabIndex = 16
         Me.btAnadirEnInforme.Text = "ANADIR AL INFORME"
         Me.btAnadirEnInforme.UseVisualStyleBackColor = False
-        '
-        'Button1
-        '
-        Me.Button1.BackColor = System.Drawing.SystemColors.HighlightText
-        Me.Button1.Location = New System.Drawing.Point(746, 10)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(51, 22)
-        Me.Button1.TabIndex = 12
-        Me.Button1.Text = "Salir"
-        Me.Button1.UseVisualStyleBackColor = False
         '
         'Form1
         '
