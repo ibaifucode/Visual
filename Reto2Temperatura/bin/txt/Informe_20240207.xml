@@ -1,8 +1,9 @@
 <RaizFusionada>
-  <Ciudad>
-    <Ciudad>Santander</Ciudad>
-    <Temperatura>16</Temperatura>
-    <Prevision>Parcialmente nublado</Prevision>
-    <FuerzaViento>15.1</FuerzaViento>
-  </Ciudad>
+  <Ciudades>
+    <Ciudad Nombre="Sestao">
+      <Temperatura>12</Temperatura>
+      <Prevision>Despejado</Prevision>
+      <FuerzaViento>29.9</FuerzaViento>
+    </Ciudad>
+  </Ciudades>
 </RaizFusionada>

@@ -5,8 +5,12 @@ Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports System.Xml
 Imports AngleSharp.Dom
 Imports CG.Web.MegaApiClient
+Imports Dropbox.Api
+Imports Dropbox.Api.Files
 Imports Google.Apis.Drive.v3
 Imports INode = AngleSharp.Dom.INode
+
+
 
 Public Class Form1
 
@@ -219,7 +223,7 @@ Public Class Form1
 
     '---------------------------------------------------------- FUNCIONALIDADES --------------------------------------------------------------------
 
-    Private Sub PublicarInforme(ByVal carpetaXml As String, ByVal carpetaTxt As String)
+    Private Async Sub PublicarInforme(ByVal carpetaXml As String, ByVal carpetaTxt As String)
         ' Obtener la lista de archivos XML en la carpeta
         Dim archivosXml As String() = Directory.GetFiles(carpetaXml, "*.xml")
 
@@ -277,7 +281,7 @@ Public Class Form1
         End Using
 
         ' Publicar en Mega
-        PublicarMega(archivoTxt)
+        Await UploadFile(archivoTxt)
 
         ' Mensaje de éxito
         Console.WriteLine($"Se fusionaron los archivos XML y se creó '{archivoXmlFusionado}' y '{archivoTxt}'")
@@ -362,35 +366,18 @@ Public Class Form1
 
 
 
-    Private Sub PublicarMega(archivo As String)
-        Dim carpetaTxt As String = archivo
+    Public Async Function UploadFile(nombrearchivo As String) As Task
 
-        Dim megaApiClient As New MegaApiClient()
-
-        Try
-            megaApiClient.Login(megaUsername, megaPassword)
-
-            ' Obtener el nombre del archivo sin la ruta completa
-            Dim fileName As String = Path.GetFileName(archivo)
-
-            ' Obtener todos los nodos en la carpeta de Mega
-            Dim megaNodes = megaApiClient.GetNodes()
-
-            ' Verificar si ya existe un archivo con el mismo nombre
-            Dim existingNode = megaNodes.FirstOrDefault(Function(node) node.Name = fileName)
-
-            If existingNode IsNot Nothing Then
-                megaApiClient.Delete(existingNode, True)
-            End If
-
-            ' Subir el nuevo archivo
-            SubirArchivoAMega(megaApiClient, carpetaTxt)
-
-            megaApiClient.Logout()
-        Catch ex As Exception
-            Console.WriteLine("Error: " & ex.Message)
-        End Try
-    End Sub
+        Console.WriteLine(nombrearchivo)
+        Using dropboxClient = New DropboxClient("sl.BvJofSY6v4BGKPPIJpyK_vZxGAX_dzXXziWaq7uCUDVtIF-BLZ-hbrWzckrE4LKev4jjA8kUemts3CGq7Bza3y5oXPlUs9DTwqEfyn8srvTY_M64IzUVVUHamYw9-3USvlFyrMTdShFWAZgMFhPk3fs")
+            Using fileStream = File.Open(URLarchivoXML, FileMode.Open)
+                Dim response = Await dropboxClient.Files.UploadAsync(
+                "/" & Path.GetFileName(nombrearchivo),
+                WriteMode.Overwrite.Instance,
+                body:=fileStream)
+            End Using
+        End Using
+    End Function
 
     Sub SubirArchivoAMega(ByVal megaApiClient As MegaApiClient, ByVal filePath As String)
         Using fileStream As New FileStream(filePath, FileMode.Open)
